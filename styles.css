@@ -1,0 +1,170 @@
+/*
+ * styles.css - CSS for Instagram Mass Follow Unfollow Automation Extension
+ * Injected by content_script.js to provide visual feedback on Instagram pages.
+ *
+ * Applies styles to user list items (elements matching USER_LIST_ITEM_SELECTOR in content_script.js)
+ * based on the automation process status.
+ *
+ * Uses unique class names prefixed with 'igaf-' to minimize conflicts with Instagram's CSS.
+ *
+ * States applied as classes to the list item element:
+ * - igaf-item-queued: Item identified as a target, waiting for its turn.
+ * - igaf-item-processing: Action (follow/unfollow) is currently being attempted on this item.
+ * - igaf-item-success: Action was successfully attempted (button state changed as expected).
+ * - igaf-item-skipped: Item was skipped (e.g., wrong initial button state, already processed in session, no action button found).
+ * - igaf-item-error: An unhandled error occurred during processing specific to this item (e.g., click failed).
+ * - igaf-item-blocked: Instagram explicitly blocked the action for this item (detected via modal/message).
+ *
+ * Visual cues primarily use 'outline' to avoid interfering with Instagram's layout.
+ * Optional styles for a small status indicator element (igaf-indicator) are included,
+ * assuming content_script.js is modified to inject such elements.
+ */
+
+/* --- Base Item Styles --- */
+/* Applied to the main user list item container element */
+/* e.g., the div surrounding user's profile pic, name, and button */
+.igaf-item {
+    /* Add a slight transition for smoother visual changes */
+    transition: outline 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    /* Ensure outline doesn't affect layout or overflow */
+    outline-offset: 1px; /* Space between element border/padding and outline */
+    box-sizing: border-box; /* Ensure padding/border are included in element's total width/height */
+    /* Add relative positioning if using the absolute indicator element */
+    /* This might need !important if Instagram applies specific positioning */
+    position: relative;
+}
+
+/* Attempt to ensure outlines/indicators are visible */
+/* This might require tweaking based on Instagram's complex stacking contexts */
+.igaf-item,
+.igaf-item * {
+     /* Reset z-index if Instagram sets it aggressively on ancestors */
+     z-index: auto;
+     /* Ensure outlines are not clipped if overflow is hidden on the item or its parent */
+     /* overflow: visible !important; /* Use with caution, can break layouts */
+}
+
+
+/* --- Status Outline Styles --- */
+/* Using outline provides a visual border-like effect without modifying the box model */
+
+.igaf-item-queued {
+    /* Blue/Cyan - Indicates the item is in the queue for processing */
+    outline: 2px dashed rgba(59, 130, 246, 0.8);
+}
+
+.igaf-item-processing {
+    /* Green - Indicates the action is currently being attempted */
+    outline: 2px solid rgba(16, 185, 129, 1);
+    /* Subtle pulsing animation to draw attention to the active item */
+    animation: igaf-pulse-outline 1.5s infinite ease-in-out;
+}
+
+/* Keyframes for subtle outline pulse animation */
+@keyframes igaf-pulse-outline {
+    0% { outline-color: rgba(16, 185, 129, 1); }
+    50% { outline-color: rgba(16, 185, 129, 0.4); } /* Fade to semi-transparent */
+    100% { outline-color: rgba(16, 185, 129, 1); }
+}
+
+.igaf-item-success {
+    /* Green - Indicates the action was attempted and appeared successful */
+    outline: 2px solid rgba(16, 185, 129, 0.8);
+    /* Optional: Subtle, low-opacity background tint */
+    /* background-color: rgba(16, 185, 129, 0.03); */
+}
+
+.igaf-item-skipped {
+    /* Orange/Yellow - Indicates the item was skipped for various reasons */
+    outline: 2px dotted rgba(245, 158, 11, 0.8);
+    /* Optional: Subtle background tint */
+    /* background-color: rgba(245, 158, 11, 0.03); */
+}
+
+.igaf-item-error {
+    /* Red - Indicates an error occurred specific to processing this item */
+    outline: 2px solid rgba(239, 68, 68, 0.8);
+    /* Optional: Subtle background tint */
+    /* background-color: rgba(239, 68, 68, 0.05); */
+}
+
+.igaf-item-blocked {
+    /* Thicker, Dashed Red - Indicates Instagram explicitly blocked the action */
+    outline: 3px dashed rgba(220, 38, 38, 1);
+    /* Optional: More noticeable background tint */
+    /* background-color: rgba(220, 38, 38, 0.1); */
+}
+
+
+/* --- Optional: Small Status Indicator Element --- */
+/*
+ * These styles are for a small element that can be injected into each list item
+ * by the content script to provide an additional visual cue (e.g., a colored dot).
+ * The content script MUST be updated to create and inject an element like:
+ * <div class="igaf-indicator [status-class]"></div>
+ * within each target list item and ensure the parent has 'position: relative'.
+ */
+.igaf-indicator {
+    position: absolute;
+    /* Position it over a corner, e.g., top-right */
+    top: 4px;
+    right: 4px;
+    width: 12px; /* Size of the dot */
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border for definition */
+    box-sizing: border-box;
+    z-index: 10; /* Ensure it's above typical content */
+    pointer-events: none; /* Do not interfere with clicks on underlying elements */
+}
+
+/* Indicator colors based on status */
+.igaf-indicator.queued {
+    background-color: #3b82f6; /* Blue/Cyan */
+}
+
+.igaf-indicator.processing {
+    background-color: #10b981; /* Green */
+    /* Subtle pulsing animation for the dot */
+    animation: igaf-pulse-indicator 1.5s infinite ease-in-out;
+}
+
+/* Keyframes for indicator pulse */
+@keyframes igaf-pulse-indicator {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; } /* Fade to semi-transparent */
+    100% { opacity: 1; }
+}
+
+.igaf-indicator.success {
+    background-color: #10b981; /* Green */
+}
+
+.igaf-indicator.skipped {
+    background-color: #f59e0b; /* Orange/Yellow */
+}
+
+.igaf-indicator.error {
+    background-color: #ef4444; /* Red */
+}
+
+.igaf-indicator.blocked {
+    background-color: #dc2626; /* Darker Red */
+}
+
+
+/* --- Considerations for Instagram's Dynamic UI and Themes --- */
+/*
+ * The rgba colors are used for slight transparency, allowing some underlying
+ * theme color to show through, which helps compatibility with dark mode.
+ * Outlines are generally safer than changing backgrounds, but complex Instagram
+ * CSS might require !important on position/z-index/overflow for the .igaf-item
+ * or .igaf-indicator if they aren't appearing correctly. This should be tested
+ * against a live Instagram page.
+ *
+ * The selectors rely on classes added by the content script. The specificity
+ * is relatively low, relying on the unique class names. If Instagram has
+ * very high-specificity rules for list items, these might need adjustment
+ * (e.g., adding !important or more complex selectors, though complex selectors
+ * are generally discouraged for performance and fragility).
+ */

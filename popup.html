@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Automation</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Instagram Automation</h1>
+            <div class="status-indicator" id="statusIndicator">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">Idle</span>
+            </div>
+        </div>
+
+        <!-- Settings Section -->
+        <div class="section">
+            <h2>Settings</h2>
+            
+            <!-- Action Type -->
+            <div class="form-group">
+                <label>Action Type:</label>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="actionType" value="follow" id="followRadio" checked>
+                        <span class="radio-custom"></span>
+                        Follow
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="actionType" value="unfollow" id="unfollowRadio">
+                        <span class="radio-custom"></span>
+                        Unfollow
+                    </label>
+                </div>
+            </div>
+
+            <!-- Interval Settings -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="intervalMin">Min Interval (s):</label>
+                    <input type="number" id="intervalMin" min="2" max="300" value="5">
+                </div>
+                <div class="form-group">
+                    <label for="intervalMax">Max Interval (s):</label>
+                    <input type="number" id="intervalMax" min="2" max="300" value="10">
+                </div>
+            </div>
+
+            <!-- Batch Settings -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="actionsPerBatch">Actions per Batch:</label>
+                    <input type="number" id="actionsPerBatch" min="1" max="50" value="10">
+                </div>
+                <div class="form-group">
+                    <label for="dailyLimit">Daily Limit:</label>
+                    <input type="number" id="dailyLimit" min="1" max="500" value="100">
+                </div>
+            </div>
+
+            <!-- Pause Settings -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pauseMin">Min Pause (min):</label>
+                    <input type="number" id="pauseMin" min="1" max="60" value="5">
+                </div>
+                <div class="form-group">
+                    <label for="pauseMax">Max Pause (min):</label>
+                    <input type="number" id="pauseMax" min="1" max="60" value="10">
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Section -->
+        <div class="section">
+            <h2>Status</h2>
+            <div class="status-grid">
+                <div class="status-item">
+                    <span class="status-label">Session:</span>
+                    <span id="sessionCount">0</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Today:</span>
+                    <span id="todayCount">0</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Targets:</span>
+                    <span id="targetCount">0</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Index:</span>
+                    <span id="currentIndex">0</span>
+                </div>
+            </div>
+            <div class="status-details" id="statusDetails">
+                Ready to start automation
+            </div>
+        </div>
+
+        <!-- Control Buttons -->
+        <div class="controls">
+            <button id="startBtn" class="btn btn-start">
+                <span class="btn-icon">▶</span>
+                Start
+            </button>
+            <button id="stopBtn" class="btn btn-stop" disabled>
+                <span class="btn-icon">⏹</span>
+                Stop
+            </button>
+        </div>
+
+        <!-- Warning Section -->
+        <div class="warning">
+            <div class="warning-header">
+                <span class="warning-icon">⚠️</span>
+                Important Notice
+            </div>
+            <p>This tool may violate Instagram's Terms of Service. Use at your own risk. Account restrictions or bans may occur.</p>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
